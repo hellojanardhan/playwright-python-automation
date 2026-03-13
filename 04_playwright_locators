@@ -1,0 +1,189 @@
+# Playwright Locators
+1️⃣ What is a Locator?
+A locator in Playwright is a way to find and interact with elements on a web page.
+It helps playwright identify buttons , text fields , links and check boxes etc .. before performing actions like:
+    1. click
+    2. type
+    3. check
+    4. select
+    5. verify
+👉 In simple words:
+    Locator = Method used to identify an element on the webpage.
+Example
+-------
+    page.locator("#login")
+This locator finds an element with id = login
+
+2️⃣ Why Locators are Important
+Locators are the core part of Playwright automation.
+They are important because they:
+    1. Identify elements on the page
+    2. Perform actions on elements
+    3. Validate UI elements
+    4. Make tests stable and reliable
+Without locators , Playwright cannot interact with the UI.
+
+3️⃣ Basic Locator Syntax
+Basic syntax
+------------
+    page.locator("selector")
+
+Example
+-------
+    page.locator("#username")
+    page.locator(".login-btn")
+    page.locator("text=login")
+
+Example with actions
+--------------------
+    page.locator("#login").click()
+
+4️⃣ Built-in Recommended Locators
+    1️⃣ get_by_role()
+    Find elements using ARIA roles.
+    Example:
+        page.get_by_role("button" , name = "login").click()
+
+    Common roles:
+    -------------
+        Role & Example:        
+        1. button -> Login button
+        2. textbox -> input field
+        3. link -> Hyperlink
+        4. checkbox -> Checkbox
+        5. radio -> Radip button
+
+        Example:
+            page.get_by_role("textbox" , name = "username")
+    👉 Best practice for accessible applications
+
+    2️⃣ get_by_text()
+    Find elements using visible text
+    Examples:
+        page.get_by_text("Login").click()
+
+        page.get_by_text("Submit")
+    Useful when text is unique on the webpage.
+
+    3️⃣ get_by_label()
+    Used for form inputs connected with labels
+    Example:
+        page.get_by_label("Email")
+    
+    Best for :
+        1. forms
+        2. Input fields
+    4️⃣ get_by_placeholder()
+    Used for input fields that have placeholder text.
+    Example:
+        page.get_by_place_holder("Enter username")
+
+    5️⃣ get_by_alt_text()
+    Used for images.
+    page.get_by_alt_text("Company logo")
+
+    6️⃣ get_by_title()
+    Used when elements have title attribute
+    Example:
+        page.get_by_title("Close")
+    
+    7️⃣ get_by_test_id()
+    Used for test specific attributes
+    Example:
+        page.get_by_text_id("login-button")
+    
+5️⃣ Traditional Locators (CSS / XPath)
+Playwright also supports CSS and XPath selectors.
+    1️⃣ CSS Selectors
+    Example:
+        page.locator("#username")
+        page.locator(".login-btn")
+        page.locator("input[name = 'email']")
+    
+    Examples:
+        page.locator("button.submit")
+        page.locator("div.header")
+    
+    2️⃣ XPath Selectors
+    Example:
+        page.locator("//button[text()='Login']")
+    ⚠️ XPath is supported but not recommended unless necessary.
+
+6️⃣ Chaining Locators
+Locators can be combined to find elements inside other elements.
+Example HTML
+------------
+    <div class="card">
+        <button>Buy</button>
+    </div>
+Locator
+-------
+    page.locator(".card").locator("button").click()
+
+Meaning
+-------
+    1. Find ".card"
+    2. Inside it find "button"
+
+7️⃣ Filtering Locators
+Playwright allows filtering elements.
+Example
+-------
+    page.get_by_role("button").filter(has_text="Login")
+Example
+-------
+    page.locator("div").filter(has_text="Product")
+
+8️⃣ nth() Locator
+Used when multiple elements match the same locator.
+Example
+------- 
+    page.locator("button").nth(0)
+
+Examples
+--------
+    page.locator("button").first
+    page.locator("button").last
+
+Example:
+    page.locator("button").first.click()
+
+9️⃣ Locator vs ElementHandle
+Playwright recommands locator instead of ElementHandle
+Locator & ElementHandle
+----------------------- 
+1. Auto waits -> No auto wait
+2. Retry mechanism -> No retry
+3. More stable -> Less stable
+
+Example(Recommanded)
+--------------------
+    page.locator("#login").click()
+
+🔟 Best Practices for Locators
+Use this priority order when writing locators.
+    1️⃣ get_by_role()
+    2️⃣ get_by_label()
+    3️⃣ get_by_placeholder()
+    4️⃣ get_by_text()
+    5️⃣ get_by_test_id()
+    6️⃣ CSS selectors
+    7️⃣ XPath (last option)
+
+1️⃣1️⃣ Example Login Test Using Locators
+Example
+-------
+    def test_login(page):
+        page.goto("https://example.com")
+        page.get_by_label("Username").fill("admin")
+        page.get_by_label("Password").fill("admin123")
+
+        page.get_by_role("button" , name = "Login").click()
+        page.get_by_text("Dashboard")
+
+
+
+
+
+
+

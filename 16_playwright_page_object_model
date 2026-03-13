@@ -1,0 +1,247 @@
+# Playwright Page Object Model (POM)
+1️⃣ What is Page Object Model (POM)?
+Page Object Model is a design pattern used in test automation to organize test code.
+In POM, 
+    1. Each web page in the application is represented as a class
+    2. This class contains:
+        -> Locators
+        -> Methods to perform actions on the page.
+So instead of writing everythin in the test file , we separate page actions from test logic.
+
+2️⃣ Why Page Object Model is Used
+Wihtout POM ,
+    1. Locators
+    2. Actions
+    3. Test logic
+are all written inside the test file , making it messy.
+Problems:
+    1. Hard to maintain
+    2. Code duplication
+    3. Difficult to reuse
+POM solves this by organizing code properly
+
+3️⃣ Basic Idea of POM
+Example application page:
+    Login page
+    ----------
+        username field
+        password field
+        login button
+    
+    In POM , we can create class like this:
+        LoginPage
+        ├── locators
+        ├── actions
+        └── methods
+Then tests will call these methods instead of interacting with elements directly.
+
+4️⃣ Folder Structure (Playwright + Python)
+Typical structure:
+    project/
+    │
+    ├── tests/
+    │     test_login.py
+    │
+    ├── pages/
+    │     login_page.py
+    │     dashboard_page.py
+    │
+    ├── conftest.py
+    │
+    └── playwright.config
+
+Explanation:
+    Folder & Purpose
+    ----------------
+    1. tests -> contains test cases
+    2. pages -> contains page classes
+    3. conftest.py -> fixtures
+    4. config -> Playwright settings
+
+5️⃣ Page Object Model Flow
+Flow of execution
+-----------------
+Test File
+   ↓
+Page Object Class
+   ↓
+Playwright Page
+   ↓
+Browser
+
+Example:
+--------
+    test_login.py
+    ↓
+    LoginPage.login()
+    ↓
+    page.fill()
+    page.click()
+    ↓
+    Browser performs actions
+
+6️⃣ Example Without POM (Bad Practice)
+def test_login(page):
+    page.goto("https://example.com/login")
+
+    page.fill("#username","admin")
+    page.fill("#password","admin123")
+    page.click("#login")
+
+    assert page.url == "https://example.com/dashboard"
+
+
+Problems:
+    1. Locators inside test
+    2. Hard to reuse
+    3. If locator changes -> all tests fail
+
+7️⃣ Example With POM (Good Practice)
+LoginPage class
+---------------
+class LoginPage:
+
+    def __init__(self, page):
+        self.page = page
+        self.username = page.locator("#username")
+        self.password = page.locator("#password")
+        self.login_btn = page.locator("#login")
+
+    def goto_login_page(self):
+        self.page.goto("https://example.com/login")
+
+    def login(self, user, pwd):
+        self.username.fill(user)
+        self.password.fill(pwd)
+        self.login_btn.click()
+
+
+test_login.py
+-------------
+from pages.login_page import LoginPage
+
+def test_login(page):
+
+    login = LoginPage(page)
+
+    login.goto_login_page()
+    login.login("admin","admin123")
+
+
+Now:
+    1. Test is clean
+    2. Logic is resuable
+
+8️⃣ Important Components in POM
+    1️⃣ Page Class
+    Represents the web page
+    Example:
+        class LoginPage:
+
+    2️⃣ Constructor
+    Used to initialize playwright page object
+    def __init__(self, page):
+        self.page = page
+    
+    3️⃣ Locators
+    Store element selectors
+    Example:
+        self.username = page.locator("#username")
+        self.password = page.locator("#password")
+    
+    4️⃣ Methods / Actions
+    Methods perform user actions
+    Example:
+        def login(self, user, pwd):
+
+    Inside methods:
+        fill() , click() , press() , select_option()
+    
+9️⃣ Advantages of POM
+1. Code reusability
+    Same page methods used in many tests
+2. Easy maintenance
+    If locator changes:
+        Change in one place only
+3. Cleaner test case
+    Test files only contain test logic
+4. Better readability
+    Test becomes human readable
+    Examples:
+        login_page.login("admin","admin123")
+5. Scalable Framework
+    Suitable for large framework frameworks.
+
+🔟 POM With Assertions Example
+PageClass
+---------
+class DashboardPage:
+
+    def __init__(self,page):
+        self.page = page
+        self.heading = page.locator("h1")
+
+    def get_heading(self):
+        return self.heading.text_content()
+
+Test
+----
+def test_dashboard(page):
+    dashboard = DashboardPage(page)
+    assert dashboard.get_heading() == "Dashboard"
+
+1️⃣1️⃣ Best Practices for POM
+1. Keep locators inside page class
+    Bad:
+        page.locator("#login")
+    Good:
+        self.login_btn
+2. Use meaningful method names
+Example:
+    login()
+    search_product()
+    add_to_cart()
+    logout()
+3. Avoid assertions inside page classes
+    Assertions should stay in test files.
+    Bad:
+        assert self.heading.is_visible()
+    Good:
+        expect(dashboard.heading).to_be_visible()
+4. One class = One page
+    Example:
+        LoginPage
+        HomePage
+        DashboardPage
+        CartPage
+
+1️⃣2️⃣ Real Project Example
+Example:
+    E-commerce website
+
+    Pages:
+        LoginPage
+        HomePage
+        ProductPage
+        CartPage
+        CheckoutPage
+
+    Tests:
+        test_login.py
+        test_add_to_cart.py
+        test_checkout.py
+    
+Each test will reuse page methods.
+
+1️⃣3️⃣ POM + Fixtures Example
+Using pytest fixture:
+    @pytest.fixture
+    def login_page(page):
+        return LoginPage(page)
+
+Test:
+    def test_login(login_page):
+        login_page.goto_login_page()
+        login_page.login("admin","admin123")
+
+

@@ -1,0 +1,171 @@
+# Debuggin in playwright
+
+1️⃣ What is Debugging in Playwright?
+Debugging in playwright means identifying and fixing issues in test scripts when test fail or behave unexpectedly.
+It helps to:
+    1. Understand why a test failed
+    2. Inspect the browser using execution
+    3. Analyze selectors , actions and assertions
+Debugging tools allows you to pause , inspect elements , check logs and trace execution.
+
+2️⃣ Why Debugging is Important in Playwright
+Debugging helps in :
+    1. Test fail unexpectedly
+    2. Locators are correct
+    3. Timing issue occur
+    4. Elements are not visible or interactable
+    5. Flaky tests appear
+
+Benefits:
+    1. Faster issue identification
+    2. Easier test maintenance
+    3. Reliable automation tests
+
+3️⃣ Running Tests in Debug Mode
+Playwright provides a debug mode that runs tests slowly and allows inspection.
+Command:
+    pytest --headed --slowmo=1000
+Explanation:
+    --headed -> open browser with UI
+    --slowmo -> Adds delay (1000ms) between actions
+
+Example:
+    page.goto("https://example.com")
+    page.click("text-login").click()
+You can visually see each step happennig in the browser
+
+4️⃣ Using page.pause() for Debugging
+Playwright provides a pause method to stop test execution.
+Example:
+    page.goto("https://example.com")
+    page.pause()
+    page.click("text=login")
+What happens:
+    1. Test execution pauses
+    2. Playwright inspector opens
+    3. You can inspect elements and run commands
+
+5️⃣ Playwright Inspector
+Playwright inspector is a debugging GUI tool.
+It helps you:
+    1. sleep through tests
+    2. Inspect locators
+    3. Run commands manually
+    4. Resum execution
+
+Features:
+    1. Highlight elements
+    2. Evaluate selectors
+    3. Step-by-Step execution
+    4. Edit locators interactively
+
+6️⃣ Using PWDEBUG Environment Variable
+You can enable debugging using an evironmental variable.
+Command:
+    PWDDEBUG=1 pytest
+This will:
+    1. Launch the browser in debug mode
+    2. Open playwright inspector
+    3. Pause execution automatically
+Useful for deep debugging
+
+7️⃣ Debugging with Print Logs
+Sometimes simple logs help identify issues.
+Example:
+    print("Navigating to login page")
+
+    page.goto("https://example.com")
+
+    print("Clicking login button")
+    page.click("text=Login")
+
+This helps track where the test fails.
+
+8️⃣ Taking Screenshots for Debugging
+Screenshots help capture the UI state when a test fails.
+Example:
+    page.screenshot(path = "screenshot.png")
+
+Example with failure debuggin:
+    try:
+        page.click("#login")
+    expect:
+        page.screenshot(path="error.png")
+
+Benefits:
+    1. Visual proof of failure
+    2. Easy Analysis
+
+9️⃣ Recording Trace for Debugging
+Playwright provides trace viewer for deep debuggin.
+Trace includes:
+    1. Screenshots
+    2. DOM snapshots
+    3. Network logs
+    4. Console logs
+Enable tracing:
+    context.tracing.start(screenshots=True , snapshots = True)
+
+    # run test scripts
+    context.tracing.stop(path="trace.zip")
+View trace:
+    playwright show-trace trace.zip
+Trace Viewer shows step-by-step execution of tests.
+
+🔟 Using Video Recording
+Playwright can record test execution videos.
+Example:
+    browser.new_context(record_video_dir="videos/")
+Benefits:
+    1. Watch test execution
+    2. Identify UI failures
+    3. Understand flaky tests
+
+1️⃣1️⃣ Debugging Locators
+Many failures happen due to incorrect locators.
+Example:
+    page.click("#login-btn")
+
+Use locator debugging:
+    locator=page.locator("#login-btn")
+    print(locator.count())
+
+This helps verify if the element exists.
+
+1️⃣2️⃣ Using locator.highlight() (Inspector)
+In playwright inspector , you can:
+    1. Hover elements
+    2. Highlight elements
+    3. Check visibility
+This helps confirm that the correct element is selected.
+
+1️⃣3️⃣ Common Debugging Techniques
+Best practices:
+    1. Run tests in headed mode
+    2. Use slow motion
+    3. Use playwright inspector
+    4. Take screenshots
+    5. Record traces
+    6. Add logs
+    7. Verify locators
+
+1️⃣4️⃣ Example Debugging Workflow
+Example test:
+    def test_login(page):
+
+    page.goto("https://example.com")
+
+    page.pause()
+
+    page.fill("#username", "admin")
+    page.fill("#password", "admin123")
+
+    page.click("#login")
+
+    assert page.locator("text=Dashboard").is_visible()
+
+Steps:
+    1. Test pauses at page.pause()
+    2. Inspector opens
+    3. Check elements
+    4. Resume test

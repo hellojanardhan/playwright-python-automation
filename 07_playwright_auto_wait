@@ -1,0 +1,176 @@
+# Auto-Waiting in Playwright
+1️⃣ What is Auto-Waiting?
+Auto-Waiting is a built-in feature in Playwright where it automatically waits for elements to be ready before performing actions.
+This means Playwright will not automatically execute actions like click or fill.
+Instead , it waits until the element is:
+    1. Visible
+    2. Stable
+    3. Enabled
+    4. ready for interaction
+
+👉 Simple definition:
+    Auto-waiting = Playwright automatically waits for elemens to be ready before interacting with them.
+
+2️⃣ Why Auto-Waiting is Important
+In web applications, Elements may take time to appear because of:
+    1. Page loading
+    2. API response
+    3. Animations
+    4. Dynamic content
+
+Without waiting , tests may fail with errors like:
+    1. Element not found
+    2. Element not clickable
+    3. Timeout errors
+Auto-Wating reduces flaky tests and makes tests more reliable.
+
+3️⃣ Example Without Auto-Waiting (Traditional Automation Tools)
+In order tools like Selenium , we often write:
+    time.sleep(10)
+    driver.find_element(...).click()
+
+Problems:
+    ❌ slows tests
+    ❌ unreliable
+    ❌ not dynamic
+
+4️⃣ Example With Playwright Auto-Waiting
+Playwright automatically waits.
+Exaple:
+    page.get_by_role("button" , name = "Login").click()
+
+Playwright will wait until:
+    1. The button exists
+    2. The button is visible
+    3. The button is clickable
+
+Then it performs the click action
+No manual wait is required.
+
+5️⃣ Actionability Checks in Playwright
+Before performing an action , Playwright performs actionability checks.
+These checks ensure the element is ready for interaction.
+For example:
+    locator.click()
+
+Playwright ensures
+------------------
+1. Element exists in DOM
+2. Element is visible
+3. Element is stable(not animating)
+4. Element is enabled
+5. Element receives pointer events
+Only after passing these checks , the action is needed.
+
+6️⃣ Example of Auto-Waiting Flow
+Example code:
+    page.locator("#submit").click()
+
+Execution flow:
+    1. Playwright finds the locator
+    2. Check if element exists
+    3. Waits until element is visible
+    4. Waits until element becomes clicable
+    5. Perform click action
+If these conditions are not met within the timeout -> TimeoutError occurs.
+
+7️⃣ Auto-Waiting for Assertions
+Playwright also auto-waits for assertions.
+Example:
+    expect(page.get_by_text("#Login Successful")).to_be_visible()
+Playwright will automatically wait until:
+    1. the text appears
+    2. or timeout occurs
+This avoids writing manual waits.
+
+8️⃣ Example: Waiting for Element to Appear
+Example:
+    page.get_by_text("Dashboard")
+If the dashboard appears after 3 seconds , Playwright will automatically wait for it.
+
+9️⃣ Default Timeout
+Playwright has a default timeout of 30 seconds
+Meaning:
+    Playwright waits up to 30 seconds for actions or assertions.
+
+Example:
+    page.set_default_timeout(30000)
+Example with custom timeout:
+    page.locator("#submit").click(timeout = 5000)
+
+🔟 When Auto-Waiting Does NOT Work
+Auto-waits works for actions and assertions , but not for everything.
+Situations where manual waiting may be required:
+    1. Waiting for API response
+    2. Waiting for page navigation
+    3. Waiting for animations
+    4. Waiting for network calls
+Example:
+    page.wait_for_load_state("networkidle")
+
+1️⃣1️⃣ Manual Waiting Methods
+Even though Playwright has auto-waiting , sometimes manual testing is needed.
+    1️⃣ wait_for_selector()
+    Wait until element appears
+    Example:
+        page.wait_for_selector("#login")
+    
+    2️⃣ wait_for_timeout()
+    Explicit wait (not recommended)
+    Example:
+        page.wait_for_elemet(3000)
+    waits 3 seconds
+    ⚠️ Should be avoided in real projects.
+
+    3️⃣ wait_for_load_state()
+    Wait for page loading
+    Example:
+        page.wait_for_load_state("load")
+    
+    Options:
+        1. load
+        2. documentation
+        3. networkidle
+    
+    1️⃣2️⃣ Auto-Waiting vs Explicit Wait
+    Auto-wait & Explicit wait
+    -------------------------
+    1. Built into playwright , written manually
+    2. Automatic , Developer controls
+    3. Faster tests , slower tests
+    4. recommended  , Use only whe needed.
+
+1️⃣3️⃣ Advantages of Auto-Waiting
+1. No need for slee()
+2. Reduces flaky tests
+3. Faster execution
+4. Smart writing mechanism
+5. Improves test stability
+
+1️⃣4️⃣ Common Errors Related to Waiting
+TimeoutError
+Occurs when playwright waits but element never becomes ready.
+Example:
+    TimeoutError : locator.click : Timeout 30000s exceeded.
+Meaning:
+    Element was not ready within 30 seconds.
+
+1️⃣5️⃣ Real Example
+Example:
+    def test_login(page):
+
+    page.goto("https://example.com")
+
+    page.get_by_label("Username").fill("admin")
+    page.get_by_label("Password").fill("admin123")
+
+    page.get_by_role("button", name="Login").click()
+
+    expect(page.get_by_text("Dashboard")).to_be_visible()
+Playwright automatically waits for:
+    1. Page loading
+    2. Login button readiness
+    3. Dashboard text visibility
+
+
+

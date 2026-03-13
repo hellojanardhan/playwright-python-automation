@@ -1,0 +1,204 @@
+# Browser Context in Playwright
+
+1️⃣ What is Browser Context?
+A Browser Context in Playwright is an isolated environment within a browser instance.
+It allows you to create multiple independent sessions inside a single browser.
+Each browser context has its own:
+    1. cookies
+    2. local storage
+    3. session storage
+    4. cache
+    5. authentication state
+👉 Simple definition:
+    Browser-context = An isolated browser session inside a browser
+
+2️⃣ Real World Example
+Think of Browser Context like incognito windows.
+Examples:
+    1. Chrome normal window
+    2. Chrome incognito window
+Both are independent sessions.
+Similarly , Playwright creates isolated browser contexts.
+Example:
+    Browser
+        ├── Context 1 (User A)
+        ├── Context 2 (User B)
+        └── Context 3 (Guest user)
+Each context behaves like a separate browser session.
+
+3️⃣ Why Browser Context is Important
+Browser context is important because it allows:
+    1. Test isolation
+    2. Multiple users testing
+    3. Parallel test execution
+    4. Authentication testing
+without contexts, tests may share cookies and sessions , causing failures.
+
+4️⃣ Browser → Context → Page Architecture
+Playwright architecture:
+    Browser
+        └── Browser Context
+                └── Page (Tab)
+Explanation:
+    1. Browser -> Chrome / FireFox / WebKit
+    2. Browser Context -> Isolated session
+    3. Page -> Browser tab
+
+Example:
+    Browser
+        ├── Context 1
+        │      ├── Page 1
+        │      └── Page 2
+        └── Context 2
+                └── Page 3
+
+5️⃣ Creating Browser Context
+Example:
+    browser = playwright.chromium.launch()
+    context = browser.new_context()
+    page=context.new_page()
+
+Steps:
+    1. Launch browser
+    2. Create context
+    3. Open page inside element
+
+5️⃣ Creating Browser Context
+Example:
+    from playwright.sync_api import synch_playwright
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        context = browser.new_context()
+        page = context.new_page()
+        page.goto("https://example.com")
+
+7️⃣ Multiple Browser Contexts
+Playwright allows multiple contexts in one browser.
+Example:
+    context1=browser.new_context()
+    context2=browser.new_context()
+
+    page1 = context1.new_page()
+    page2 = context2.new_page()
+
+Use cases:
+    Testing multiple uses simultaneously.
+Examples:
+    User 1 -> logged in
+    User 2 -> Guest user
+
+8️⃣ Example: Multi-User Testing
+Example:
+    context_admin = browser.new_context()
+    context_user = browser.new_context()
+
+    admin_page = context_admin.new_page()
+    user_page = context_page.new_page()
+Now both users can interact with the application independently.
+
+9️⃣ Incognito Behavior
+By default , every new browser context behaves like incognito mode.
+Meaning:
+    1. no shared cookies
+    2. no shared storage
+    3. no saved login sessions.
+This ensures test isoloation.
+
+🔟 Storage Isolation
+Each browser context has its own storage:
+    Storage type & Isolation
+    ------------------------
+    1. Cookies , separate
+    2. Local Storage  , separate
+    3. Session storage , separate
+    4. Cache , separate
+Example:
+    User login in context1 will not affect context2
+
+1️⃣1️⃣ Authentication Using Browser Context
+Browser context is commonly used for authentication reuse.
+Example:
+    save login state:
+        context.storage_state(paht = "auth.json")
+
+    Load Login state:
+        context = browser.new_context(storage_state = "auth.json")
+Benefits:
+    1. Avoid repeated logins
+    2. Faster test execution
+
+1️⃣2️⃣ Closing Context
+Example:
+    context.close()
+Closing context will:
+    1. Close all pages inside it.
+    2. Clear session data
+
+1️⃣3️⃣ Context Options
+Browser contexts can b configured.
+Example:
+    context = browser.new_context(
+    viewport={"width":1280, "height":720},
+    locale="en-US",
+    timezone_id="Asia/Kolkata"
+)
+
+Common options
+--------------
+    Option & Purpose
+    ----------------
+    1. viewport -> Screen size
+    2. locale -> language
+    3. timezone -> timezone
+    4. geolocation -> location
+    5. permissions -> browswer permissions
+
+1️⃣4️⃣ Context with Mobile Emulation
+Example:
+    context = browser.new_context(
+    user_agent="iPhone",
+    viewport={"width":375, "height":812}
+)
+Useful for mobile testing.
+
+1️⃣5️⃣ Browser Context vs Browser
+Browser & Browser Context
+-------------------------
+1. Actual browser instance , Isolated session
+2. Heavy operation , lighweight 
+3. one browser only , Multiple contexts possible
+4. Slower creation , Faster creation
+
+Example:
+    Better to create multiple contexts instead of mutliple browsers
+
+1️⃣6️⃣ Browser Context in Playwright Test Runner
+When using playwright test frameworks:
+    Each test automatically runs in a new browser context.
+Benefits:
+    1. Test isolation
+    2. No session conflicts
+
+1️⃣7️⃣ Real Project Example
+Example scenario:
+    Testing chat between TWO users.
+
+Example:
+    context1 = browser.new_context()
+    context2 = browser.new_context()
+
+    page1 = context1.new_page()
+    page2 = context2.new_page()
+
+    page1.goto("https://chatapp.com")
+    page2.goto("https://chatapp.com")
+
+1️⃣8️⃣ Advantages of Browser Context
+1. Test isolation
+2. Faster test execution
+3. Supports multi-user testing
+4. No session conflicts
+5. Lightweight compared to browser
+
+
+

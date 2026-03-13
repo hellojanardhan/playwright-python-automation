@@ -1,0 +1,218 @@
+# Running Tests in Playwright
+
+1️⃣ What Does "Running Tests" Mean?
+Running tests means executing automated test scripts to verify that the application behaves as expected.
+In Playwright  , tests can be executed using:
+    1. Playwright CLI
+    2. Pytest Framework
+    3. Command line
+    4. IDE/ Test Runner
+👉 Simple definition:
+    Running tests = Executing Playwright automation scripts to validate application behavior
+
+2️⃣ Ways to Run Playwright Tests
+Playwright tests can be executed in several ways:
+    1. Using pytest command
+    2. Running specific test files
+    3. Running specific test cases
+    4. Running tests in headless/headed mode
+    5. Running tests in parallel
+
+3️⃣ Running Tests Using Pytest
+Most playwright python frameworks use pytest.
+Basic command:
+    pytest
+This command , 
+    1. finds all test files
+    2. execute all test cases
+Example test file:
+    test_login.py
+Example test case:
+    def test_login(page):
+        page.goto("https://example.com")
+    
+4️⃣ Test File Naming Convention
+Pytest follows naming rules to identify test files.
+Valid names:
+    1. test_login.py
+    2. test_checkout.py
+    3. test_search.py
+
+Test function naming:
+    1. def test_login():
+    2. det test_checkout():
+
+Rules:
+    1. File name starts with test_
+    3. Function name starts with test_
+
+5️⃣ Running a Specific Test File
+To run a single test file:
+    syntax:
+        pytest <file_name>
+    Example:
+        pytest test_login.py
+    Only that file will run.
+
+6️⃣ Running a Specific Test Case
+To run a specific test case:
+    pytest test_login.py::test_valid_login
+Example:
+    pytest test_checkout.py::test_payment
+This runs only one test case
+
+7️⃣ Running Tests in Headless Mode
+Headless mode runs tests without opening the browser UI.
+Command:
+    pytest
+By default Playwright uses headless in CI environments.
+Advantages:
+    1. Faster execution
+    2. USed in CI/CD pipelines
+
+8️⃣ Running Tests in Headed Mode
+Headed mode opens the browser UI while executing tests.
+Example:
+    pytest --headed
+
+Benefits:
+    1. Useful for debugging
+    2. Helps visualization automation.
+
+9️⃣ Running Tests in Parallel
+Playwright supports parallel test execution.
+Example command:
+    pytest -n 4
+
+Meaning:
+    Run test in 4 parallel workers
+
+Benefits:
+    1. Faster execution
+    2. Reduced  test time
+
+NOTE:
+    Required pytest-xdist plugin.
+Install
+    pip install pytest-xdist
+
+🔟 Running Tests with Verbose Output
+Verbose mode shows detailed test results.
+Command :
+    pytest -v
+
+Output example:
+    test_login.py::test_valid_login PASSED
+    test_logib.py::test_invalid_login FAILED
+
+1️⃣1️⃣ Running Tests with HTML Report
+Generate HTML test report.
+Example:
+    pytest --html=report.html
+
+Install plugin:
+    pip install pytest-html
+
+Benefits:
+    1. Visual test results
+    2. Useful for reporting
+
+1️⃣2️⃣ Running Tests by Markers
+Pytest allows grouping tests using markers.
+Example:
+    import pytest
+    @pytest.mark.smoke
+    def test_login():
+        pass
+    
+    Run smoke tests:
+        pytest -m smoke
+
+    Example markers:
+        Marker & Purpose
+        -----------------
+        1. smoke -> Basic tests
+        2. regression -> full testing
+        3. sanity -> quick validation
+    
+1️⃣3️⃣ Running Tests with Debug Mode
+for debugging tests:
+    pytest --pdb
+
+Open python debugger when test fails.
+
+1️⃣4️⃣ Running Tests with Playwright Debug Mode
+Playwright provides debugging tools.
+Example:
+    PWDDEBUG=1 pytest
+Features:
+    1. step-by-step execution
+    2. Inspector tool
+    3. DOM inspection
+
+1️⃣5️⃣ Running Tests with Trace Viewer
+Trace viewer records test execution.
+Example:
+    pytest --trace on
+
+View trace:
+    playwright show-trace trace.zip
+
+Trace shows:
+    1. screenshots
+    2. network calls
+    3. actions
+    4. DOM snapshots
+Useful for debugging failues
+
+1️⃣6️⃣ Running Tests in CI/CD
+Playwright tests can run in CI tools like:
+    1. Jenkins
+    2. GitHub Actions
+    3. GitLab CI
+    4. Azure DevOps
+
+Example CI command:
+    pytest
+Typically executed in headless mode.
+
+1️⃣7️⃣ Real Example
+Example test file:
+    def test_login(page):
+
+    page.goto("https://example.com")
+
+    page.get_by_label("Username").fill("admin")
+    page.get_by_label("Password").fill("admin123")
+
+    page.get_by_role("button", name="Login").click()
+
+
+run command:
+    pytest test_login.py
+
+1️⃣8️⃣ Common Test Execution Flow
+Typical flow when running tests:
+    1. Pytest discovered test files
+    2. Browser is launched
+    3. Browser context is created
+    4. Test steps execute
+    5. Assertion validate results
+    6. Tests results are generated
+
+1️⃣9️⃣ Common Errors While Running Tests
+1. ModuleNotFoundError
+Occurs when depenencies are missing.
+Solution:
+    pip install playwright
+
+2. TimeoutError
+Occurs when elements take too long.
+Solution:
+    Increase timeout or fix locator
+
+2. Browser Not Installed
+Solution:
+    playwright install
+
+

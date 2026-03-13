@@ -1,0 +1,358 @@
+# Authentication in Playwright
+
+1️⃣ What is Authentication?
+Authentication means verifying the identity of a user before allowing access to an application.
+
+Example:
+    1. Login using username + password
+    2. Login using OTP
+    3. Login using OAuth / SSO
+
+In testing , authentication is required when:
+    1. The application requires login
+    2. Tests need to access protected pages.
+
+Example:
+    1. Dashboard
+    2. User profile
+    3. Order history
+
+2️⃣ Problem with Login in Every Test
+If we write login steps in every test.
+Test1 → Login → Do actions
+Test2 → Login → Do actions
+Test3 → Login → Do actions
+
+Problems:
+    ❌ Tests execution became very slow
+    ❌ Repeated code in every tests
+    ❌ Maintenance becomes difficult
+
+To solve this problem, playwright provides Authentication State (Storage State)
+
+3️⃣ Authentication State (Storage State)
+Playwright can save the logged-in session and reuse it for future tests.
+This session includes:
+    1. Cookies
+    2. Local storage
+    3. Session storage
+
+Playwright stores them in a JSON File.
+Example:
+    auth.json
+
+After saving this file , tests can skip the login step.
+
+4️⃣ Authentication Flow in Playwright
+Typical workflow:
+    Step 1 → Login once
+    Step 2 → Save authentication state
+    Step 3 → Reuse authentication state in tests
+
+Flow Diagram:
+    Login Test
+        ↓
+    Browser Login
+        ↓
+    Save Storage State
+    (auth.json)
+        ↓
+    Reuse in Multiple Tests
+
+5️⃣ Saving Authentication State
+First , we login in once and save the session.
+Example:
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        context = browser.new_context()
+        page = context.new_page()
+
+        page.goto("https://example.com")
+        page.fill("#username", "user")
+        page.fill("#password", "password")
+        page.click()
+
+        # Save authentication state
+        context.storage_state(path="autu.json")
+        browser.close()
+
+        What happens here?
+        1. Browser opens
+        2. Login is performed
+        3. Authentication session is saved to
+            auth.json
+    
+6️⃣ Reusing Authentication State
+Now we resuse the stored login session.
+Example:
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+
+        context = brower.new_context(storage_state="auth.json")
+        page=context.new_page()
+        page.goto("https://example.com/dashboard")
+        print(page.title())
+        browser.close()
+    
+    Result:
+        Playwright automatically loads:
+            1. cookies
+            2. local storage
+        
+    So the user is already logged in.
+
+7️⃣ Using Authentication with Pytest Fixtures
+In real projects , we use fixtures to share authentication.
+Example:
+    tests/
+        auth.json
+        conftest.py
+        test_dashboard.py
+
+conftest.py
+-----------
+    import pytest
+    from playwright.sync_api import sync_playwright
+    @pytest.fixture(scope="session")
+    def browser_context():
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            context = browser.new_context(storage_state = "auth.json")
+            yield context
+            browser.close()
+test_dashboard.py
+-----------------
+    def test_dashboard(browser_context):
+        page = browser_context.new_page()
+        page.goto("https://example.com/dashboard")
+        assert "Dashboard" in page.title()
+    
+    Here:
+        1. Login is reused
+        2. No need to login again
+    
+8️⃣ Authentication using API (Fastest Method)
+Instead of loggin in through UI , we use can API Authentication.
+Steps:
+    1. Send login request
+    2. Get Authentication cookies
+    3. Save them as storage state
+
+    Example:
+        request_context = playwright.request.new_context()
+        response = request_context.post(
+            "https://example.com/api/login", 
+            data = {
+                "username" : "user",
+                "password" : "password"
+            }
+        )
+        storage = request_context.storage_state(path="auth.json")
+    
+    Advantages:
+        1. Faster than UI login
+        2. Stable tests
+
+9️⃣ Multiple User Authentication
+Sometimes tests need multiple users.
+Examples:
+    1. Admin user
+    2. Normal user
+    3. Guest user
+
+We can create separate auth files.
+
+Example:
+    admin_auth.json
+    user_auth.json
+    guest_auth.json
+
+Example:
+    context = browser.new_context(storage_state = "admin_auth.json")
+
+🔟 Best Practices for Authentication
+1. Login only once
+    Avoid login in every test
+2. Use storage_state
+    Save authentication sessions
+3. Use fixtures
+    Shares authentication across tests
+4. Use API Authentication
+    Faster and more stable
+5. Use separate users
+    Avoid test conflicts
+
+1️⃣1️⃣ Real Project Folder Structure
+Example:
+    playwright_project/
+
+    tests/
+    test_login.py
+    test_dashboard.py
+
+    auth/
+    user_auth.json
+    admin_auth.json
+
+    conftest.py
+
+1️⃣2️⃣ Advantages of Authentication Handling
+1. Faster test execution
+2. Avoid repeated login steps
+3. Better test maintainability
+4. Reusable login sessions
+5. Scalable for large test suites
+
+
+Example of auth.json
+--------------------
+1️⃣ Step 1 — Login Script (Create auth.json)
+First we login one time and save the login session.
+login.py
+--------
+# login.py
+
+    from playwright.sync_api import sync_playwright
+
+    with sync_playwright() as p:
+
+        browser = p.chromium.launch(headless=False)
+
+        context = browser.new_context()
+
+        page = context.new_page()
+
+        # Open login page
+        page.goto("https://example.com/login")
+
+        # Enter credentials
+        page.fill("#username", "testuser")
+        page.fill("#password", "password123")
+
+        # Click login
+        page.click("#login")
+
+        # Save login session
+        context.storage_state(path="auth.json")
+
+        browser.close()
+
+2️⃣ What Happens When This Script Runs
+Execution flow:
+    Open Browser
+        ↓
+    Go to Login Page
+        ↓
+    Enter Username & Password
+        ↓
+    Login Successful
+        ↓
+    Playwright saves login session
+        ↓
+    auth.json file is created
+
+Now your project folder will look like:
+    project/
+    │
+    ├── login.py
+    ├── auth.json
+    ├── conftest.py
+    └── test_dashboard.py
+
+3️⃣ What Is Inside auth.json
+auth.json stores login session data , not credentials.
+Example:
+    {
+        "cookies": [
+            {
+            "name": "session_id",
+            "value": "abc123"
+            }
+        ],
+        "origins": []
+    }
+
+This means:
+    User session is saved
+So the website knows the user is already logged in.
+
+4️⃣ Step 2 — Use auth.json in Tests
+Now we load this login session.
+conftest.py
+-----------
+    import pytest
+    from playwright.sync_api import sync_playwright
+
+    @pytest.fixture(scope="session")
+    def browser_context():
+
+        with sync_playwright() as p:
+
+            browser = p.chromium.launch()
+
+            context = browser.new_context(storage_state="auth.json")
+
+            yield context
+
+            browser.close()
+Explanation:
+------------
+    Start browser
+        ↓
+    Load auth.json
+        ↓
+    User already logged in
+
+5️⃣ Step 3 — Test Without Login
+test_dashboard.py
+-----------------
+    def test_dashboard(browser_context):
+
+    page = browser_context.new_page()
+
+    page.goto("https://example.com/dashboard")
+
+    assert "Dashboard" in page.title()
+
+Explanation:
+------------
+    Open new page
+        ↓
+    Go to dashboard
+        ↓
+    Since auth.json is loaded
+    User is already logged in
+        ↓
+    Check page title
+        ↓
+    Test passed
+
+6️⃣ Complete Flow
+    Run login.py
+        ↓
+    Login to application
+        ↓
+    Create auth.json
+        ↓
+    Run tests
+        ↓
+    Load auth.json
+        ↓
+    User already logged in
+        ↓
+    Run tests without login
+
+7️⃣ Very Simple Real-Life Example
+Think like this:
+    First time -> Login with username / password
+    Website gives session cookie
+
+Next time:
+    Browser sends cookie
+    Website recognizes user
+    No login required
+
+auth.json = saved login session
+

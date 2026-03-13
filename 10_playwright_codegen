@@ -1,0 +1,192 @@
+# Code Generator (Codegen) in Playwright
+1️⃣ What is Codegen?
+Codegen (Code generator) in Playwright is a tool that automatically generates automation test scripts by recording user actions on the browser.
+
+When you interact with a website (click , type , navigate) , Playwright records those actions and converts them into playwright code.
+
+👉 Simple definition:
+    Codegen = Tool that records browser actions and generates playwright automation code automatically.
+
+2️⃣ Why Codegen is Useful
+Codegen helps tests and developers to:
+    1. Quicly generates automation scripts
+    2. Identify reliable locators
+    3. Learn playwright syntax
+    4. Save development time
+It is expecially helpful for beginners learning playwright.
+
+3️⃣ Command to Start Codegen
+Basic command:
+    playwright codegen
+
+Example:
+    playwright codegen https://example.com
+
+This will:
+    1. Open a browser
+    2. Open playwright inspector
+    3. Start recording user actions
+
+4️⃣ Codegen Interface
+When codegen starts , two windows open:
+    1️⃣ Browser Window
+    Used to interact with the application
+    Example:
+        1. click buttons
+        2. Enter text
+        3. Navigate pages
+        4. Select options
+    
+    2️⃣ Playwright Inspector
+    Displays generated playwright code in real-time
+    Example output:
+        page.goto("https://example.com")
+        page.get_by_label("Username").fill("admin")
+        page.get_by_label("Password").fill("admin123")
+        page.get_by_role("button", name="Login").click()
+    
+5️⃣ Example Workflow
+Step-by-Step example:
+    Command:
+        playwright codegen https://example.com
+    
+Actions Performed:
+    1. Enter username
+    2. Enter password
+    3. Click login
+
+Generated code:
+    page.goto("https://example.com")
+    page.get_by_label("Username").fill("admin")
+    page.get_by_label("Password").fill("admin123")
+    page.get_by_role("button", name="Login").click()
+
+6️⃣ Locator Generation
+One of the best features of Codegen is automatic locator generation.
+Playwright automatically suggests best locator strategies such as:
+    1. get_by_role()
+    2. get_by_text()
+    3. get_by_label()
+    4. get_by_placeholder()
+
+Example generated locator:
+    page.get_by_role("button" , name = "login")
+This helps create stable automation scripts.
+
+7️⃣ Codegen Locator Picker
+The locator picker allows selecting elements directly.
+Steps:
+    1. Click pick locator in inspector
+    2. Click element in browser
+    3. Playwright generates the locator
+
+Example generated locator:
+    page.get_by_text("Submit")
+
+8️⃣ Recording Actions
+Codegen records various user actions.
+Examples:
+    Action & Generate code
+    ----------------------
+    1. Click -> page.click()
+    2. Fill input -> page.fill()
+    3. select dropdown -> page.select_option()
+    4. check checkbox -> page.check()
+    5. Navigate page -> page.goto()
+
+Example:
+    page.get_by_label("Email").fill("user@test.com")
+
+9️⃣ Saving Generated Code
+The generated code can be copied and pasted into test scripts.
+Example test file:
+    test_login.py
+
+Example usage:
+    def test_login(page):
+
+    page.goto("https://example.com")
+
+    page.get_by_label("Username").fill("admin")
+    page.get_by_label("Password").fill("admin123")
+
+    page.get_by_role("button", name="Login").click()
+
+🔟 Codegen with Different Browsers
+Codegen supports multiple browsers.
+Example:
+    playwright codegen --browser chromium
+
+Other options:
+    playwright codegen --browser firefox
+    playwright codegen --browser webkit
+
+1️⃣1️⃣ Codegen with Device Emulation
+Playwright supports mobile device recording.
+Example:
+    playwright codegen --device="iPhone 13"
+
+this opens browser with mobile viewport and user agent.
+Useful for mobile automation testing.
+
+1️⃣2️⃣ Codegen with Authentication
+You can start Codegen on a logged-in a page.
+Example:
+    playwright codegen https://example.com/dashboard
+then record actions on authenticated pages.
+
+1️⃣3️⃣ Codegen for Learning Playwright
+Codegen is very helpful when:
+    1. Learning playwright syntax
+    2. Finding element locators
+    3. Understanding automation flow.
+
+Example:
+    You click an element -> Codegen shows the exact playwright command.
+
+1️⃣4️⃣ Limitations of Codegen
+Although useful , Codegen should not be used to generate full frameworks.
+Problems:
+    1. Generate code may not follow best practice
+    2. Code may need refactoring
+    3. Not optimised for large test suites
+
+Best approach:
+    Use Codegen for reference only.
+
+1️⃣5️⃣ Best Practices When Using Codegen
+1. Use Codegen to find locators
+2. Clean up generated code
+3. Add assertions manually
+4. Convert recorded steps into reusable functions
+
+1️⃣6️⃣ Example of Improved Code
+Codegen output:
+    page.goto("https://example.com")
+    page.get_by_label("Username").fill("admin")
+    page.get_by_label("Password").fill("admin123")
+    page.get_by_role("button", name="Login").click()
+
+Improved version:
+    def test_login(page):
+
+    page.goto("https://example.com")
+
+    page.get_by_label("Username").fill("admin")
+    page.get_by_label("Password").fill("admin123")
+
+    page.get_by_role("button", name="Login").click()
+
+1️⃣7️⃣ Codegen vs Manual Script Writing
+Codegen & Manual script
+-----------------------
+1. Automatically generates code  , Written by developer
+2. Fast for beginners , Better for frameworks
+3. Useful for locator discovery , More optimized code
+
+1️⃣8️⃣ Real Project Usage
+In real projects , Codegen is mainly used for:
+    1. Finding element locators
+    2. Quickly generating action steps
+    3. Debugging element selection
+But frameworks are usally written manually.

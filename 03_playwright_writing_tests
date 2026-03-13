@@ -1,0 +1,176 @@
+# Writing Tests in Playwright
+1️⃣ Introduction
+Writing tests in Playwright is simple and follows pytest conventions.
+A Playwright test mainly contains
+---------------------------------
+    1. Navigation -> Opens a webpage
+    2. Actions -> Interact with element
+    3. Assertions -> Verify expected results
+Playwright automatically waits for elements before performing actions , so manual waits are usually not required.
+
+2️⃣ Basic Test Example
+Example Playwright test
+-----------------------
+import re
+from playwright.sync_api import sync_playwright , Page , expect
+def test_has_title(page : Page):
+    page.goto("https://example.com")
+    expect(page).to_have_title(re.compile("Playwright"))
+
+Explanation
+-----------
+    Page
+        -> Represents the browser page
+
+    page.goto()
+        -> Opens the given URL
+    
+    expect()
+        -> Used to verify expected results
+    
+3️⃣ Writing Multiple Tests
+A single file can contain multiple test functions.
+Example
+-------
+    import re
+    from playwright.sync_api import Page , expect , sync_playwright
+    def test_has_title(page : Page):
+        page.goto("https://playwright.dev/")
+        expect(page).to_have_title(re.compile("Playwright"))
+    
+    def test_get_started(page : Page):
+        page.goto("https://playwright.dev/")
+        page.get_by_role("link", name = "Get Started").click()
+        expect(page.get_by_role("heading" , name = "Installation")).to_be_visible()
+Each function represents one test case.
+
+4️⃣ Test File Naming Rules
+Playwright follows pytest naming conventions
+File name must starts with
+--------------------------
+    test_
+    Example:
+        test_login.py
+        test_homepage.py
+        test_search.py
+
+Function name must also starts with
+-----------------------------------
+    test_
+    Example:
+        def test_login(page : Page):
+    
+5️⃣ Test Structure in Real Projects
+In real playwright Projects , tests are usually organized like this.
+Project Structure
+-----------------
+project/
+│
+├── tests/
+│   ├── test_login.py
+│   ├── test_homepage.py
+│   └── test_checkout.py
+│
+├── pages/
+│   └── login_page.py
+│
+├── conftest.py
+└── pytest.ini
+
+Explanation
+-----------
+tests/
+    Contains test scripts
+
+pages/
+    Page Object Model files
+
+conftest.py
+    Shared fixtures for tests
+
+6️⃣ Navigation in Tests
+Most tests begin by opening a website.
+Example
+-------
+    page.goto("https://example.com")
+Playwright automatically waits for the page to load before performing any actions.
+
+7️⃣ Performing Actions
+Actions are performed using locators.
+Example
+-------
+    page.get_by_role("link" , name = "Get Started").click()
+
+Steps:
+------
+    1. Locate the element
+    2. Perform action on the element
+
+Commom actions
+--------------
+    Action & Description
+    --------------------
+    1. locator.click() -> Click element
+    2. locator.fill() -> Enter text
+    3. locator.hover() -> hover mouse
+    4. locator.press() -> Press keyboard key
+    5. locator.check() -> Check checkbox
+    6. locator.select_option() -> Select dropdown option
+
+8️⃣ Assertions
+Assertions verify the expected results.
+Example
+-------
+    expect(page).to_have_title("Playwright")
+
+Example locator assertion
+    expect(locator).to_be_visible()
+
+Common Assertions
+-----------------
+    Assertion & Description
+    -----------------------
+    1. expect(locator).to_be_visible() -> element is visible
+    2. expect(locator).to_have_text() -> Check text
+    3. expect(locator).to_be_enabled() -> Element enabled
+    4. expect(locator).to_have_title() -> Verify title
+    5. expect(locator).to_have_url() -> Verify page URL
+Playwright assertions automatically retry until the condition is satisfied.
+
+9️⃣ Test Isolation
+Each playwright test runs in separate browser context
+Meaning
+-------
+    -> Every test starts with a fresh browser environment
+
+Benefits
+--------
+    1. Tests do not affect each other
+    2. Data is not shared between tests
+    3. Reduces flaky tests
+
+🔟 Using Fixtures
+Playwright integrates with pytest fixtures.
+Example
+-------
+    import re
+    from playwright.sync_api import Page
+    @pytest.fixture
+    def open_home(page : Page):
+        page.goto("https://playwright.dev")
+        yield
+    
+Fixtures are used for
+    1. Setup before tests
+    2. Clean after tests
+    3. Reusing test code
+
+1️⃣1️⃣ Key Points
+Important things to remember
+    1. Test files must start with "test_"
+    2. Test functions must start with "test_"
+    3. Use page fixtures for browser interaction
+    4. Use locator to find elements
+    5. Use expect() for assertion
+    6. Each test runs in isolated browser context
+    

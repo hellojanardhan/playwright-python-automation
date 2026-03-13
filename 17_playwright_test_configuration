@@ -1,0 +1,312 @@
+# Playwright Test Configuration
+Test Configuration means defining how tests should run in the project.
+It includes settings like:
+    1. Browser Type
+    2. Headless / headed mode
+    3. Base URL
+    4. Timeouts
+    5. Parallel execution
+    6. Environment configuration
+These configuration help control test execution without changing test code.
+
+1️⃣ What is Test Configuration?
+Test Configuration is the central place where we define test execution settings.
+Instead of writing settings in every test , we define them once in configuration files.
+Example:
+    Instead of writing this in every test:
+        browser = playwright.chromium.launch(headless=False)
+    We configure it globally
+
+Benefits:
+    1. Cleaner tests
+    2. Reusable setup
+    3. Easy environment switching
+    4. Better maintainability
+
+2️⃣ Where Test Configuration is Defined
+In playwright + pytest , configuration is mainly done in:
+    1. pytest.ini
+    2. conftest.py
+    3. Enviroment variables
+    4. Custom config files
+
+Project structure example
+-------------------------
+project/
+│
+├── tests/
+│   ├── test_login.py
+│   ├── test_cart.py
+│
+├── pages/
+│   ├── login_page.py
+│
+├── utils/
+│
+├── conftest.py
+├── pytest.ini
+└── requirements.txt
+
+3️⃣ pytest.ini (Main Configuration File)
+pytest.ini is the main configuration file for pytest.
+It defines:
+    1. test discovery rules
+    2. markers
+    3. default options
+
+Example
+-------
+[pytest]
+
+addopts = -v -s
+
+testpaths = tests
+
+python_files = test_*.py
+
+markers =
+    smoke: smoke tests
+    regression: regression tests
+
+Explanation
+-----------
+    Option & Meaning
+    ----------------
+    1. -v -> Verbose output
+    2. -s -> Show print statements
+    3. testpaths -> folder containing tests
+    4. python_files -> test file naming rule
+
+4️⃣ Test Configuration in conftest.py
+conftest.py is used to configure test fixtures and browser setup.
+This file acts like a global configuration file for tests.
+Example:
+    import pytest
+    from playwright.sync_api import sync_playwright
+
+    @pytest.fixture(scope="session")
+    def browser():
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=False)
+            yield browser
+            browser.close()
+        
+Explanation
+-----------
+1. Launch browser once per session
+2. Share browser across tests
+
+5️⃣ Browser Configuration
+You can configure browser options like:
+    1. Headless mode
+    2. Slow motion
+    3. Browser type
+    4. Viewport size
+
+Example:
+    browser = p.chromium.launch(
+        headless=False,
+        slow_mo=200
+    )
+Options
+-------
+    Option & Purpose
+    ----------------
+    1. headless -> Run browser without UI
+    2. slow_mo -> Slows down execution
+    3. args -> pass browser arguments
+
+6️⃣ Base URL Configuration
+Instead of repeating the URL in tests , we define base URL.
+Example:
+    https://example.com
+
+In Fixture
+----------
+@pytest.fixture
+def page(browser):
+    context = browser.new_context(base_url="https://example.com")
+    page = context.new_page()
+    yield page
+    context.close()
+
+Usage in Test
+-------------
+def test_login(page):
+    page.goto("/login")
+
+Result
+------
+https://example.com/login
+
+7️⃣ Timeout Configuration
+Playwright allows setting default timeout for actions.
+Example:
+    context = browser.new_context()
+    context.set_default_timeout(30000)
+
+This means:
+    Timeout = 30 seconds
+
+Used for:
+    1. click
+    2. fill
+    3. locator actions
+
+8️⃣ Viewport Configuration
+Viewport defines browser window size
+Example:
+    context = browser.new_context(
+        viewport={"width":1280, "height":720}
+    )
+
+Useful for:
+    1. Responsive testing
+    2. UI validation
+
+9️⃣ Environment-Based Configuration
+Real projects have multiple environments.
+1. DEV
+2. QA
+3. STAGING
+4. PROD
+
+Example
+-------
+    DEV -> dev.example.com
+    QA -> qa.example.com
+
+Using Environmental Variables
+-----------------------------
+import os
+
+base_url = os.getenv("BASE_URL")
+
+Run test with environment
+-------------------------
+BASE_URL = https://qa.example.com pytest
+
+🔟 Command Line Configuration
+Pytest allows configuration via command line options.
+Example:
+    pytest --browser chromium
+
+Custom option in conftest.py
+---------------------------
+def pytest_addoption(parser):
+    parser.addoption(
+        "--browser",
+        action="store",
+        default="chromium"
+    )
+
+Usage:
+    browser_name = request.config.getoption("--browser")
+
+1️⃣1️⃣ Multi Browser Configuration
+Tests can run in multiple browsers.
+Example:
+    Chromium
+    Firefox
+    WebKit
+
+Example:
+    @pytest.fixture(params=["chromium","firefox"])
+    def browser(request, playwright):
+        browser = getattr(playwright, request.param).launch()
+        yield browser
+        browser.close()
+This runs the test twice
+
+1️⃣2️⃣ Headless vs Headed Mode
+Headless 
+    -> Browser runs without UI
+        headless=True
+Used in:
+    -> CI/CD
+    -> fast execution
+
+Headed
+    -> Browser runs with UI
+        headless=False
+Usef for:
+    1. debugging
+    2. development
+
+1️⃣3️⃣ Test Markers Configuration
+Markers help categorize tests.
+Example:
+    @pytest.mark.smoke
+    def test_login():
+
+Run only smoke test:
+    pytest -m smoke
+
+defined in pytest.ini
+
+1️⃣4️⃣ Logging Configuration
+You can configure logging for debugging
+Example:
+    import logging
+
+    logging.basicConfig(
+        level=logging.INFO
+    )
+Useful for:
+    1. debuggin failures
+    2. tracking execution
+
+1️⃣5️⃣ Screenshot Configuration
+Capture screenshots when test fails.
+Example:
+    page.screenshot(path="failure.png")
+In frameworks , screenshots are usually taken in pytest hooks.
+
+Example:
+    def pytest_runtest_makereport(item):
+        pass
+
+1️⃣6️⃣ Authentication Configuration
+Authentication state can also part of configuration
+Example:
+    auth.json
+
+context = browser.new_context(
+    storage_state="auth.json"
+)
+This helps reusing login session
+
+1️⃣7️⃣ Real Project Configuration Example
+project/
+│
+├── tests/
+│   ├── test_login.py
+│
+├── pages/
+│   ├── login_page.py
+│
+├── config/
+│   ├── settings.py
+│
+├── utils/
+│
+├── conftest.py
+├── pytest.ini
+
+config/settings.py
+------------------
+BASE_URL = "https://example.com"
+HEADLESS = False
+TIMEOUT = 30000
+
+conftest.py
+-----------
+from config.settings import BASE_URL
+
+@pytest.fixture
+def page(browser):
+    context = browser.new_context(base_url=BASE_URL)
+    page = context.new_page()
+    yield page
+
+    
