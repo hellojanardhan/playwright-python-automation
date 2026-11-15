@@ -1,0 +1,39 @@
+<form id="signup-form">
+
+    <input id="user-name" type="text"
+           name="username" class="form-control">
+
+    <input id="email" type="email"
+           name="email" class="form-control">
+
+    <button type="submit"
+            class="btn btn-primary">
+        Signup
+    </button>
+
+    <ul id="skills">
+        <li>Python</li>
+        <li>Selenium</li>
+        <li>Playwright</li>
+    </ul>
+
+    <div class="error-message">
+        Invalid email
+    </div>
+
+</form>
+
+Descendant A B= form input -> Locate all elements or not? or first matching element
+
+Direct child A > B = ui > li -> Locate all the elements having li 
+
+Next adjacent sibling A + B = h2 + p
+
+followinf sibling -> A ~ B 
+
+:first-child
+:nth-child(2)
+:last-child
+:not(x) -> exclude matching elements
+:has(x) -> parent containing descendant
+
