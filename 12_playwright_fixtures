@@ -1,0 +1,224 @@
+# Playwright Fixtures
+
+1️⃣ What are Fixtures in Playwright?
+A Fixture is a reusable setup that prepares the test environment before a test runs.
+Fixtures help to:
+    1. Setup resources
+    2. Share objects between tests
+    3. Clean up after test execution
+👉 In simple terms:
+    Fixture provide test dependencies like browser , page , context , data or setup logic automatically to tests.
+
+Example:
+    def test_example(page):
+        page.goto("https://example.com")
+Here page is a fixture provided by playwright.
+
+2️⃣ Why Fixtures are Important
+Fixture help in :
+    1. Reducing duplicate code
+    2. Reusing setup logic
+    3. Managing test dependencies
+    4. Maintaining clean test structure
+    5. Isolating tests
+Without fixtures:
+    browser = playwright.chromium.launch()
+    context = browser.new_context()
+    page = context.new_page()
+
+you would repeat this in every test.
+Fixtures solve this problem
+
+3️⃣ Built-in Fixtures in Playwright
+Playwright provides several default fixtures.
+Common Built-in fixtures
+------------------------
+    Fixture & Description
+    ---------------------
+    1. page -> Browser page used for testing
+    2. browser -> Browser instance
+    3. context -> Browser context
+    4. playwright -> Playwright instance
+    5. request -> API testing requests
+    6. browser_name -> Name of browser running test
+    7. base_url -> Base URL configured in project.
+
+Example:
+    det test_login(page):
+        page.goto("https://google.com")
+
+    Here page fixture automatically creates:
+        Browser -> Context -> Page
+    
+4️⃣ Fixture Lifecycle
+Fixtures follow a lifecycle:
+    Setup
+    ↓
+    Test Execution
+    ↓
+    Teardown
+
+Example flow:
+    Create browser
+    Create context
+    Create page
+    Run test
+    Close page
+    Close Context
+    Close Browser
+Playwright automatically handles this lifecycle
+
+5️⃣ Test-level Fixtures
+These fixtues run for every test.
+Example:
+    def test_one(page):
+    page.goto("https://example.com")
+
+    def test_two(page):
+        page.goto("https://google.com")
+    
+Each test page:
+    New Page
+    New Context
+This ensures test isolation
+
+6️⃣ Custom Fixtures
+You can create your own fixtures.
+Example:
+    import pytest
+    @pytest fixture
+    def login_page(page):
+        page.goto("https://example.com")
+        return page
+    
+    Test
+    ----
+    def test_login(login_page):
+        login.page("#username", "admin")
+    
+Here login_page is custom fixture
+
+7️⃣ Fixture Scopes
+Fixtures can run at different scopes.
+Scope & Description
+-------------------
+1. function -> Runs for each test
+2. class -> Runs once per class
+3. module -> Runs once per file
+4. session -> Runs once per test session
+
+Example:
+    @pytest.fixture(scope="session")
+    def setup_data():
+        print("Run once for all tests")
+
+Scope helps in performance optimization
+
+8️⃣ Fixture Dependency
+Fixtures can depend on other fixtures.
+Example:
+    @pytest.fixture
+    def login(page):
+        page.goto("https://example.com/login")
+        page.fill("#user","admin")
+        page.fill("#pass","1234")
+        page.click("button")
+        return page
+    
+Test:
+    def test_dashboard(login):
+        login.click("#dashboard")
+
+Here:
+    Login fixture -> uses page fixture
+
+So fixtures can be chained.
+
+9️⃣ Auto-use Fixtures
+Fixtures can run automatically without calling them in tests.
+Example:
+    @pytest.fixture(autouse=True)
+    def setup(page):
+        page.goto("https://example.com")
+    
+Now every test automatically starts with this setup.
+
+🔟 Setup and Teardown using Fixtures
+Fixtures can also manage setup and cleanup.
+Example:
+    @pytest.fixture
+    def setup_page(page):
+        page.goto("https://example.com")
+        yield page
+        print("Cleanup after test")
+
+Explanation:
+    Before yield -> Setup
+    After yield -> Teardown
+This is very common in automation framework
+
+
+1️⃣1️⃣ Fixtures in conftest.py
+Fixtures are usually placed in conftest.py so that all tests can access them.
+Project structure:
+    tests/
+        conftest.py
+        test_login.py
+        test_cart.py
+    
+Example:
+    @pytest.fixture
+    def open_home(page):
+        page.goto("https://example.com")
+        return page
+
+Now all test files can use:
+    def test_home(open_home):
+        pass
+Not important needed.
+
+1️⃣2️⃣ Playwright Fixture Flow
+Typical playwright fixture flow:
+    Test
+    ↓
+    Page Fixture
+    ↓
+    Browser Context
+    ↓
+    Browser
+
+Hierarchy:
+    Browser
+    ↓
+    Context
+    ↓
+    Page
+    ↓
+    Test
+
+Each test usually gets a new context to avoid interference.
+
+1️⃣3️⃣ Example Playwright Test using Fixtures
+Example:
+    from playwright.sync_api import Page
+
+    def test_login(page: Page):
+        page.goto("https://example.com/login")
+        page.fill("#username","admin")
+        page.fill("#password","1234")
+        page.click("button[type='submit']")
+
+Playwright automatically provides:
+    Browser
+    Context
+    Page
+
+1️⃣4️⃣ Advantages of Fixtures
+Fixture provides:
+    1. Code reuse
+    2. Test isolation
+    3. Cleaner tests
+    4. Centralized setup
+    5. Easy maintenance
+    6. Automatic teardown
+

@@ -1,0 +1,172 @@
+# Playwright Assertions
+1️⃣ What are Assertions?
+Assertions are used to verfiy that the appplication behaves as expected.
+They check whether:
+    1. an element is visible
+    2. text is correct
+    3. element is enabled or disabled
+    4. checkbox is checked
+    5. URL is correct
+👉 If the condition passes → test passes
+👉 If the condition fails → test fails
+Simple meaning:
+    Assertion = Verification in test automation
+
+Example:
+    expect(page.get_by_text("login")).to_be_visible()
+This checks whether login text is visible on the page.
+
+2️⃣ Why Assertions are Important
+Assertions are important because they:
+    1. Validate application behavior
+    2. Ensure UI works correctly
+    3. Detect bugs automatically
+    4. Make automated tests meaningful
+Without assertions:
+    👉 Tests only perform actions but do not verify results.
+
+3️⃣ Assertion Syntax in Playwright
+Basic syntax:
+    expect(locator).assertion()
+
+Example:
+    expect(page.locator("#login")).to_be_visible()
+
+Example:
+    expect(page.get_by_text("Dashboard")).to_be_visible()
+
+4️⃣ Auto Waiting in Assertions
+Playwright assertions automatically wait until the condition becomes true.
+Example:
+    expect(page.get_by_text("Login Successful")).to_be_visible()
+
+Playwright will:
+    1. Wait for the element
+    2. Retry the assertion
+    3. Fail only after timeout
+
+Default timeout:
+    5 seconds
+this reduce flaky tests.
+
+5️⃣ Commonly Used Assertions
+These assertions are commonly used in projects and interviews.
+
+6️⃣ Visibility Assertions
+    1️⃣ to_be_visible()
+    Checks whether element is visible
+    Example:
+        expect(page.get_by_text("Login")).to_be_visible()
+    Meaning:
+        1. Element exists
+        2. Element visible on UI
+    
+    2️⃣ to_be_hidden()
+    Checks whether element is hidden
+    Example:
+        expect(page.locator("#loading")).to_be_hidden()
+    
+7️⃣ Element State Assertions
+    1️⃣ to_be_enabled()
+    Checks if element is enabled
+    Example:
+        expect(page.locator("#submit")).to_be_enabled()
+    
+    2️⃣ to_be_disabled()
+    Checks if element is disabled 
+    Example:
+        expect(page.locator("#submit")).to_be_disabled()
+    
+8️⃣ Checkbox Assertions
+    1️⃣ to_be_checked()
+    Checks whether checkbox or radio button is checked
+    Example:
+        expect(page.locator("#remember)).to_be_checked()
+
+9️⃣ Text Assertions
+    1️⃣ to_have_text()
+    Checks exact text
+    Example:
+        expect(page.locator("hi)).to_have_text("Welcome")
+
+    2️⃣ to_contain_text()
+    Checks partial text
+    Example:
+        expect(page.locator(".message")).to_contain_text("Success")
+    Example:
+        expect(page.get_by_role("alert")).to_contain_text("Login successful")
+    
+🔟 Attribute Assertions
+    1️⃣ to_have_attribute()
+    Checks element attribute
+    Example HTML
+        <input type="text" disabled>
+    Example:
+        expect(page.locator("input")).to_have_attribute("type" , "text")
+
+1️⃣1️⃣ Value Assertions
+    1️⃣ to_have_value()
+    Checks value inside input fields
+    Example:
+        expect(page.locator("#username")).to_have_value()
+    
+1️⃣2️⃣ Count Assertions
+    1️⃣ to_have_count()
+    Checks number of elements
+    Example:
+        expect(page.locator(".product")).to_have_count(5)
+    Meaning:
+        There should be 5 product items.
+
+1️⃣3️⃣ Page Assertions
+Playwright can verify page URL and title.
+    1️⃣ to_have_url()
+    Checks page URL
+    Example:
+        expect(page).to_have_url("https://example.com/dashboard")
+    
+    2️⃣ to_have_title()
+    Checks page title
+    Example:
+        expect(page).to_have_title("Dashboard")
+    
+1️⃣4️⃣ Element Attachment Assertions
+    1️⃣ to_be_attached()
+    Checks whether element is attached to DOM
+    Example:
+        expect(page.locator("#login")).to_be_attached()
+    
+    Meaning:
+        Element exists in DOM structure
+
+1️⃣5️⃣ Negating Assertions
+Playwright supports negative assertions.
+Syntax:
+    expect(locator).not_to_ve_visible()
+
+Example:
+    expect(page.get_by_text("Error")).not_to_be_visible()
+
+Example:
+    expect(page.locator("#loading")).not_to_be_visible()
+
+1️⃣6️⃣ Soft Assertions
+Soft assertions allow test to continue even if assertion fails
+Example:
+    expect(soft(page.get_by_text("login")).to_be_visible())
+Use case:
+    1. Reporting multiple failures
+    2. Non critical checks
+
+1️⃣7️⃣ Hard Assertions vs Soft Assertions
+Type & Behavior
+---------------
+1. Hard assertion -> Test stops when assertion fails
+2. Soft assertion -> Test continues even if assertion fails.
+Example:
+    expect(page.get_by_text("Login")).to_be_visible()
+
+Soft assertion:
+    expect.soft(page.get_by_text("Login")).to_be_visible()
+
+

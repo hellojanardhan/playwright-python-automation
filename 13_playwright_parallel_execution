@@ -1,0 +1,226 @@
+# Parallel Execution
+
+1️⃣ Parallel Execution in Playwright
+Parallel Execution means running multiple test cases at the same time instead of one after another.
+It helps to reduce total test execution time.
+Example:
+    Execution Type & Time taken
+    ----------------------------
+    1. Sequantial (1 by 1) -> 30 minutes
+    2. Parallel (multiple tests simultaneously) -> 8-10 minutes
+So Parallel test execution is mainly used to speed up automation test execution.
+
+2️⃣ Why Parallel Execution is Important (Interview Point)
+In real projects we may have:
+    1. 500 +
+    2. 1000 +
+    3. 5000 + testcases
+Running them sequantially will take hours.
+
+Parallel execution helps to :
+    1. Reduce execution time
+    2. Improve CI/CD pipeline speed
+    3. Run tests on mutliple browsers/devices simultaneously
+    4. Detect failures faster
+
+3️⃣ How Parallel Execution Works (Concept)
+When parallel execution is enabled:
+    1. Multiple test workers are created
+    2. Each worker runs separate test cases
+    3. Each worker launches separate browser instances
+
+Flow:
+    Test Suite
+        │
+        ├── Worker 1 → Test A → Browser Instance
+        ├── Worker 2 → Test B → Browser Instance
+        ├── Worker 3 → Test C → Browser Instance
+        └── Worker 4 → Test D → Browser Instance
+All tests run simultaneously.
+
+4️⃣ Parallel Execution in Playwright Python
+Playwright Python uses pytest framework
+Parallel execution is enabled using:
+    pytest-xdist plugin
+
+5️⃣ Installing Parallel Execution Plugin
+Install pytest-xdist
+    pip Install pytest-xdist
+
+Veirfy instllation
+    pyest --help
+
+You should see options like:
+    -n
+    --dist
+    --tx
+
+6️⃣ Running Tests in Parallel
+Basic syntax:
+    pytest -n <number of workers>
+
+Example:
+    pytest -n 4
+
+Meaning:
+    -> 4 workers will run tests simultaneously
+
+Example:
+    tests/
+        test_login.py
+        test_checkout.py
+        test_search.py
+        test_profile.py
+
+Execution:
+    Worker1 → test_login
+    Worker2 → test_checkout
+    Worker3 → test_search
+    Worker4 → test_profile
+
+7️⃣ Run Tests Using Maximum CPU Cores
+You can automatically use all CPU cores.
+    pytest -n auto
+
+Example:
+    If system has 8 cores
+        pytest -n auto
+pytest creates 8 workers
+
+8️⃣ Parallel Execution Example (Playwright + Pytest)
+Example test:
+    import pytest
+from playwright.sync_api import sync_playwright
+
+def test_google():
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto("https://google.com")
+        assert "Google" in page.title()
+        browser.close()
+
+Run Parallel:
+    pytest -n 3
+
+Output example:
+    gw0 [1] / gw1 [1] / gw2 [1]
+
+    3 workers running tests
+
+9️⃣ Parallel Execution with Multiple Browsers
+Example:
+    test_chromium.py
+    test_firefox.py
+    test_webkit.py
+
+Run
+    pytest -n 3
+
+Worker will run:
+    Worker1 → Chromium test
+    Worker2 → Firefox test
+    Worker3 → Webkit test
+This enables cross-browser parallel testing.
+
+🔟 Parallel Execution with Test Files
+Parallel execution normally happens at:
+    1. Test file level
+    2. Test function level
+
+Example file:
+    test_login.py
+
+    def test_valid_login():
+        pass
+
+    def test_invalid_login():
+        pass
+
+    def test_empty_login():
+        pass
+
+Workers may executes:
+    Worker1 → test_valid_login
+    Worker2 → test_invalid_login
+    Worker3 → test_empty_login
+
+1️⃣1️⃣ Test Isolation in Parallel Execution
+Each test must be independent
+Why?
+Parallel test run simultaneously.
+
+Best example ❌:
+    Test1 → creates user
+    Test2 → uses same user
+
+If Test2 runs first → test fails.
+Good example ✔
+    Each test should:
+        1. Create it own data
+        2. Use separate browser
+        3. Not depend on other tests
+    
+1️⃣2️⃣ Browser Isolation in Playwright
+Playwright ensures isolation using:
+Browser context
+Each test gets:
+    Browser
+        ├── Context1 → Test1
+        ├── Context2 → Test2
+        ├── Context3 → Test3
+
+This prevents:
+    Cookie conflicts
+    Session conflicts
+    Data sharing issues
+
+1️⃣3️⃣ Parallel Execution in CI/CD
+Parallel execution is heavily used in:
+    1. Jenkins
+    2. GitHub actions
+    3. GitLab CI
+    4. Azure DevOps
+
+Example:
+    CI Pipeline
+        │
+        ├── Worker1 → Login tests
+        ├── Worker2 → Checkout tests
+        ├── Worker3 → Search tests
+        └── Worker4 → Profile tests
+
+This reduces pipeline time drastically.
+
+1️⃣4️⃣ Common Problems in Parallel Execution
+1. Shared Test Data
+Example:
+    Multiple tests using same user
+
+Solution:
+    1. create unique users
+    2. Use test data generator
+
+2. Database Conflicts
+Example:
+    Two tests updating same record
+
+Solution:
+    Use separate test data
+
+3. File Access Issues
+Example:
+    Two tests writing same file
+
+Solution:
+    Use unique filenames
+
+4. Hardcoded Waits
+Example:
+    time.sleep(10)
+
+This slows parallel tests
+
+Solution:
+    Use playwright auto-waiting.
+

@@ -1,0 +1,170 @@
+# Playwright Architecture
+1️⃣ What is Playwright Architecture?
+Playwright Architecture explains how Playwright interacts with browsers to automate web applications.
+It describes:
+    1. How test scripts communicate with browsers
+    2. How commands are executed
+    3. How playwright manages multiple browsers and sessions
+
+Playwright follows a Client-Server Architecture Model.
+
+2️⃣ Main Components of Playwright Architecture
+Playwright architecture mainly contains three core components.
+Test Script (Client)
+        │
+        │ WebSocket / Protocol
+        ▼
+Playwright Server
+        │
+        │ Browser Protocol (CDP / Custom)
+        ▼
+Browser Engines
+
+3️⃣ Client (Test Script)
+The client is the code written by user
+Example Languages supported:
+    1. Python
+    2. Javascript
+    3. Typescript
+    4. Java
+    5. .NET
+
+Example:
+    page.goto("httsp://example.com")
+    page.click("text=login")
+
+The client sends commands to playwright.
+Example commands:
+    1. Open browser
+    2. Navigate to URL
+    3. Click element
+    4. fill input
+
+4️⃣ Playwright Server
+
+The playwright server acts as bridge between the test script and browser.
+Responsiblities:
+    1. Receives commands from the test script
+        -> When the test script executes an action like click() , fill() , goto() , etc.. the command is sent t
+            the playwright server
+    2. Converts commands into browser-level instructions
+        -> The server converts the automation command into instructions that the browser understands
+    3. Executes the action in the browser
+        -> The browser performs the requested operation (for example clicking a button or navigating to a page)
+    4. Returns results back to the test script
+        -> After execution , the result (success or error) is sent back to the test script 
+    Flow Diagram
+    ------------
+        Test Script
+            │
+            │  (click command)
+            ▼
+        Playwright Server
+            │
+            │ (convert to browser instructions)
+            ▼
+        Browser
+            │
+            │ (execute action)
+            ▼
+        Playwright Server
+            │
+            ▼
+        Test Script (result)
+Example flow:
+    click button
+        ↓
+    Playwright server converts command
+        ↓
+    Browser receives instruction
+
+5️⃣ Browser Engines
+Playwright controls real browser engines.
+Supported engines:
+    Browser Engine & Example Browser
+    --------------------------------
+    1. Chromium -> Chrome , Edge
+    2. FireFox -> Mozilla FireFox
+    3. WebKit -> Safari
+
+Playwright communicates with browsers using browser debugging protocols.
+Example:
+    1. Chromium -> Chrome DevTools Protocol (CDP)
+    2. FireFox -> custom protocol
+    3. WebKit -> custom protocol
+
+6️⃣ Communication Protocol
+Playwright uses a WebSocket connection between client and server.
+Why WebSocket?
+    Advantages:
+        1. Fast communication
+        2. Real-time interaction
+        3. Single persistent connection
+This makes playwright faster and more stable than traditional HTTP-based automation tools.
+
+7️⃣ Browser Context (Important Concept)
+Playwright uses Browser Contexts.
+A browser context is an isolated browser session.
+Example:
+    Browser
+   │
+   ├── Context 1 (User A)
+   │      └── Page
+   │
+   ├── Context 2 (User B)
+   │      └── Page
+
+Features:
+    1. Separate cookies
+    2. Separate local storage
+    3. Multiple users in same browser
+
+This helps:
+    1. Parallel testing
+    2. session isolation
+
+8️⃣ Page and Frame Structure
+Inside a browser context:
+    Browser
+   │
+   └── Context
+          │
+          └── Page (Tab)
+                 │
+                 └── Frame (iframe)
+
+Explanation
+-----------
+    Component & Meaning
+    -------------------
+    1. Browser -> Browser instance
+    2. Context -> Isolated session
+    3. Page -> Browser tab
+    4. Frame -> iframe inside page
+
+9️⃣ Execution Flow
+When test runs , the flow is:
+    1. Test script executes
+    2. Playwright launches browser
+    3. Commands sent to server
+    4. Server sends instructions to browser
+    5. Browser performs actions
+    6. Results returned to test scripts.
+Example:
+    Test Code
+        ↓
+        Playwright
+        ↓
+        Browser
+        ↓
+        Web Application
+
+🔟 Why Playwright Architecture is Powerful
+Advatanges:
+    1. Fast execution
+    2. Direct browser control
+    3. Parallel execution
+    4. Cross-browser support
+    5. Isolated browser contexts
+This architecture reduces flaky tests and improves reliability.
+

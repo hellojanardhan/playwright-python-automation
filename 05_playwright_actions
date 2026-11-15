@@ -1,0 +1,238 @@
+# Playwright Actions
+1️⃣ What are Actions in Playwright?
+Actions are operations performed on web page elements during automation
+Playwright actions simulate real user interactions such as:
+    1. Clicking a button
+    2. typing a test
+    3. Selecting dropdown values
+    4. Checking checkboxes
+    5. Uploading files
+    6. Hovering on elements
+👉 In simple terms:
+    Action = Interact with an web element
+Example
+-------
+    page.locator("#login").click()
+Here the action is click()
+
+2️⃣ Why Actions are Important
+Actions are important because they allow automation scripts to interact with the applications like a real user.
+Actions are used to:
+    1. Perform UI operations
+    2. Simulate real user behavior
+    3. Execute workflows (login , purchase , seach)
+    4. Validate applications functionality
+Without actions, tests cannot interact with the application UI.
+
+3️⃣ Playwright Actionability Checks
+Before performing any action, Playwright performs automatic checks to ensure the element is ready.
+These checks include:
+    1. Element is visible
+    2. Element is stable (not moving)
+    3. Element is enabled
+    4. Element is receiving events
+    5. Locator resolves to exactly one element
+If checks fail , Playwright auto-waits until conditions are satisfied.
+This reduces flaky tests.
+
+4️⃣ Commonly Used Actions in Playwright
+    1️⃣ click()
+    Used to click a button , link or element.
+    Example:
+        page.locator("#login").click()
+    
+    Example:
+        page.get_by_role("button" , name ="Submit").click()
+    
+    Usecases:
+        1. Submit forms
+        2. Click buttons
+        3. Navigate pages
+    
+    2️⃣ dblclick()
+    Used to double click an element
+    Example:
+        page.locator("#file").dblclick()
+    
+    Use cases:
+        1. File section
+        2. Open folders
+    
+    3️⃣ fill()
+    Used to enter text into input fields
+    Example:
+        page.locator("#username").fill("admin")
+    Example:
+        page.get_by_label("Password").fill("admin123")
+    
+    Use cases:
+        1. Login forms
+        2. Seach fields
+        3. Registration forms
+    
+    4️⃣ type()
+    Used to type characters sequantially.
+    Example:
+        page.locator("#search").type("playwright")
+    
+    Difference:
+        Method & Behavior
+        -----------------
+        1. fill() -> Replaces existing text
+        2. type() -> Types character by character
+    
+    5️⃣ press()
+    Used to press keyboard keys
+    Example:
+        page.locator("#search").press("Enter")
+
+    Example:
+        page.keyboard.press("Escape")
+    
+    Common Keys:
+    ------------
+    1. Enter
+    2. Tab
+    3. Escape
+    4. ArrowUP
+    5. ArrowDown
+
+    6️⃣ check()
+    Used to select a checkbox
+    Examples:
+        page.locator("#remember").check()
+    
+    Use cases:
+        1. Agree terms
+        2. Select options
+    
+    7️⃣ uncheck()
+    Used to unselect a checkbox
+    Examples:
+        page.locator("#remember").uncheck()
+    
+    8️⃣ select_option()
+    Used to select values from dropdown menus
+    Examples:
+        page.locator("#country").select_option("India")
+    
+    Example using value:
+        page.locator("#country").select_option(value = "IN")
+
+    Example using label:
+        page.locator("#country").select_option(label = "India")
+    
+    9️⃣ hover()
+    Used to hover the mouse over an element
+    Example:
+        page.locator("#menu").hover()
+    
+    Use cases:
+        1. Open dropdown menus
+        2. Display tooltips
+    
+    🔟 drag_to()
+    Used to drag an element and drops it to another element.
+    Example:
+        page.locator("#item").drag_to(page.locator("#cart"))
+
+    Use cases:
+        1. Drag and drop UI
+        2. Moving elements
+    
+    1️⃣1️⃣ set_input_files()
+    Used to upload files
+    Example:
+        page.locator("#upload").set_input_files("testfile.pdf")
+    
+    Example multiple files:
+        page.locator("#upload").set_input_files(["file1.txt" , "file2.txt"])
+
+    1️⃣2️⃣ clear()
+    Used to clear input field text
+    Example:
+        page.locator("#username").clear()
+    
+    1️⃣3️⃣ focus()
+    Used to focus an element
+    Example:
+        page.locator("#email").focus()
+    
+    1️⃣4️⃣ scroll_into_view_if_needed()
+    Scrolls the page until the element becomes visible.
+    Example:
+        page.locator("#submit").scroll_into_view_if_needed()
+    
+    1️⃣5️⃣ Screenshot Action
+    Playwright allows capturing screenshots
+    Example:
+        page.screenshot(path = "page.png")
+    
+    Element screenshot:
+        page.locator("#login").screenshot(path = "page.png")
+    
+    1️⃣6️⃣ Keyboard Actions
+    Keyboard operations can be performed using page.keyboard()
+    Example:
+        page.keyboard.type("Hello")
+    
+    Example:
+        page.keyboard.type("Enter")
+
+    Shortcut example:
+        page.keyboard.press("Control+A")
+    
+    1️⃣7️⃣ Mouse Actions
+    Mouse interactions can be performed using page.mouse()
+    Example:
+        page.mouse.click(200 , 300)
+    
+    Example:
+        page.mouse.move(100 , 200)
+
+    Examples:
+        page.mouse.down()
+        page.mouse.up()
+    
+    1️⃣8️⃣ Force Actions
+    Sometimes elements may not pass actionability checks.
+    In that case , force option can be used.
+    Example:
+        page.locator("#submit").click(force=True)
+    ⚠️ Use only when necessary.
+
+    1️⃣9️⃣ Timeout for Actions
+    Actions can have custom timeouts
+    Example:
+        page.locator("#login").click(timeout=5000)
+    This waits 5 seconds before failing.
+
+    2️⃣0️⃣ Example Login Test Using Actions
+    def test_login(page):
+        page.goto("https://example.com")
+
+        page.get_by_label("Username").fill("admin")
+        page.get_by_label("Password").fill("admin123")
+
+        page.get_by_role("button" name = "login").click()
+        page.get_by_text("Dashboard")
+    
+    Actions used:
+        1. click()
+        2. fill()
+
+    2️⃣2️⃣ Difference Between Actions and Assertions
+    Actions & Assertions
+    ---------------------
+    1. Perform operatiosn -> validate results
+    2. click() , fill() -> expect()
+    3. interact with UI -> Verify UI
+
+    Example:
+        page.locator("#login").click()
+    
+    Assertion
+        expect(page.locator("#dashboard")).to_be_visible()
+    
+    
+    
