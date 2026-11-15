@@ -8,6 +8,12 @@ A structured collection of **Playwright with Python + PyTest notes** designed fo
 
 The notes progress from **basic setup → core concepts → advanced framework design**.
 
+## Running the Python examples
+
+The repository also includes runnable UI and API tests in `tests/` and
+`apitesting/`. See [AUTOMATION_SETUP.md](AUTOMATION_SETUP.md) for setup and
+test-running instructions.
+
 ---
 
 # 📂 Repository Structure
